@@ -1,0 +1,150 @@
+- hosts: all
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    - name: apt update & upgrade
+      apt:
+        update_cache: yes
+        upgrade: 'yes'
+    - name: install ffmpeg
+      apt:
+        name: ffmpeg
+        state: present
+
+- hosts: master
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    ### NFS ###
+    - name: Create shared directory '/clusterfs'
+      file:
+        path: /clusterfs
+        owner: nobody
+        group: nogroup
+        mode: "777"
+        state: directory
+    - name: Install nfs-kernel-server
+      apt:
+        name: nfs-kernel-server
+        state: present
+    - name: Test /etc/exports
+      shell: grep -c "/clusterfs" /etc/exports || true
+      register: test_grep
+    - name: Edit /etc/exports
+      lineinfile:
+        path: /etc/exports
+        line: /clusterfs 172.31.0.0/16(rw,sync,no_root_squash,no_subtree_check)
+        create: yes
+      when: test_grep.stdout == "0"
+      register: exports
+    - name: Restart nfs
+      service:
+        name: nfs-server
+        state: reloaded
+      when: exports.changed
+    - name: Kick exportfs if /etc/exports changed
+      command: /usr/sbin/exportfs -ra
+      when: exports.changed
+
+- hosts: workers
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    ### NFS ###
+    - name: "Install nfs-common"
+      apt:
+        name: nfs-common
+        state: present
+    - file:
+        path: /clusterfs
+        owner: nobody
+        group: nogroup
+        mode: "777"
+        state: directory
+    - name: Mount an NFS volume
+      ansible.posix.mount:
+        src: '{{master.private_ip}}:/clusterfs'
+        path: /clusterfs
+        opts: rw,sync,hard,intr
+        state: mounted
+        boot: yes
+        fstype: nfs
+
+- hosts: master
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    ### SLURM ###
+    - template:
+        src: hosts.j2
+        dest: /etc/hosts
+        force: 'yes'
+    - name: Set a hostname
+      hostname:
+        name: '{{ inventory_hostname }}'
+    - apt:
+        name: slurm-wlm
+        state: present
+    - name: SLURM Configuration
+      template:
+        src: slurm.conf.j2
+        dest: /etc/slurm-llnl/slurm.conf
+        force: 'yes'
+    - copy:
+        src: '{{item}}'
+        dest: /etc/slurm-llnl/{{item}}
+      with_items:
+        - cgroup.conf
+        - cgroup_allowed_devices_file.conf
+    - copy:
+        src: /etc/munge/munge.key
+        dest: /clusterfs/munge.key
+        remote_src: yes
+    - systemd:
+        name: '{{item}}'
+        state: restarted
+        enabled: yes
+      with_items:
+        - munge
+        - slurmd
+        - slurmctld
+
+
+- hosts: workers
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    ### SLURM ###
+    - template:
+        src: hosts.j2
+        dest: /etc/hosts
+        force: 'yes'
+    - name: Set a hostname
+      hostname:
+        name: '{{ inventory_hostname }}'
+    - apt:
+        name: ['slurmd', 'slurm-client']
+        state: present
+    - name: SLURM Configuration
+      template:
+        src: slurm.conf.j2
+        dest: /etc/slurm-llnl/slurm.conf
+        force: 'yes'
+    - copy:
+        src: '{{item}}'
+        dest: /etc/slurm-llnl/{{item}}
+      with_items:
+        - cgroup.conf
+        - cgroup_allowed_devices_file.conf
+    - copy:
+        src: /clusterfs/munge.key
+        dest: /etc/munge/munge.key
+        remote_src: yes
+    - systemd:
+        name: '{{item}}'
+        state: restarted
+        enabled: yes
+      with_items:
+        - munge
+        - slurmd
+

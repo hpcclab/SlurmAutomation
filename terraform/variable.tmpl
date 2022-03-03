@@ -1,0 +1,15 @@
+master:
+  name: ${master-name}
+  ip: ${master-ip}
+  private_ip: ${master-private-ip}
+  dns: ${master-dns}
+  id: ${master-dns}
+
+workers:
+%{ for index, dns in worker-dns ~}
+  - name: ${worker-name[index]}
+    ip: ${worker-ip[index]}
+    private_ip: ${worker-private-ip[index]}
+    dns: ${dns}
+    id: ${worker-id[index]}
+%{ endfor ~}

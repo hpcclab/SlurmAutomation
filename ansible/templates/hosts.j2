@@ -1,0 +1,4 @@
+{{ master.private_ip }}         {{ master.name }}
+{% for worker in workers %}
+{{ worker.private_ip }}         {{ worker.name }}
+{% endfor %}

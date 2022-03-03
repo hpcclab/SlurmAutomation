@@ -1,0 +1,84 @@
+= Index
+:toc:
+:toc-placement: preamble
+:toclevels: 2
+
+
+// Need some preamble to get TOC:
+{empty}
+
+== Prerequisite
+* Install the following program
+** Terraform (link:https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started[installation guide])
+** Ansible (`sudo apt-get install -y ansible` or link:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu[installation guide])
+* Generate SSH key-pair, if you don't have one. (`ssh-keygen -t ed25519 -f ssh_key -P ""`)
+* Generate AWS access key (link:https://console.aws.amazon.com/iamv2/home#/users[via console])
+
+== Terraform
+=== Setup
+
+* Open `terraform/main.tf` file
+
+[source,hcl-terraform]
+----
+# Edit the AWS access_key and secret_key
+provider "aws" {
+  profile    = "default"
+  region     = "us-east-1"
+  access_key = "xxxxxxxxxxxxxxxxxxxx"
+  secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+----
+
+[source,hcl-terraform]
+----
+# Edit public_key with your ssh_key.pub
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = "ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx user@local"
+}
+----
+
+=== Deployment
+[source,bash]
+----
+cd terraform
+# you need to initialize the directory
+terraform init
+terraform apply
+----
+
+== Ansible
+=== Requirements
+[source,bash]
+----
+ansible-galaxy collection install ansible.posix
+----
+
+=== Deployment
+At directory **ansible**
+[source,bash]
+----
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+mv ../ssh_key ~/.ssh/
+chmod 600 ~/.ssh/ssh_key
+
+ansible-playbook -i inventory --private-key ~/.ssh/ssh_key deploy.yml
+----
+
+== Access VMs
+
+You can look for the IP address at `ansible/inventory`.
+
+[source,bash]
+----
+ssh -i ssh_key ubuntu@<public_ip>
+----
+
+
+== Clean up
+[source,bash]
+----
+terraform destroy
+----

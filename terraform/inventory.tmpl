@@ -1,0 +1,10 @@
+[all:vars]
+master_private_ip=${master-private-ip}
+
+[master]
+${master-name} ansible_host=${master-ip} private_ip=${master-private-ip} #${master-dns}  ${master-id}
+
+[workers]
+%{ for index, dns in worker-dns ~}
+${worker-name[index]} ansible_host=${worker-ip[index]} private_ip=${worker-private-ip[index]}  #${dns}  ${worker-id[index]}
+%{ endfor ~}
