@@ -28,10 +28,7 @@ provider "aws" {
   access_key = "xxxxxxxxxxxxxxxxxxxx"
   secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
-----
 
-[source,hcl-terraform]
-----
 # Edit public_key with your ssh_key.pub
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
