@@ -8,7 +8,7 @@
 {empty}
 
 == Prerequisite
-* Install the following program
+* Install the following programs
 ** Terraform (link:https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started[installation guide])
 ** Ansible (`sudo apt-get install -y ansible` or link:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu[installation guide])
 * Generate SSH key-pair, if you don't have one. (`ssh-keygen -t ed25519 -f ssh_key -P ""`)
