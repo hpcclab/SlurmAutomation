@@ -48,43 +48,50 @@ resource "aws_security_group" "slurm-cluster-sg" {
   name = "slurm-cluster-sg"
   vpc_id      = aws_default_vpc.default.id
 
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
+//  ingress {
+//    from_port       = 22
+//    to_port         = 22
+//    protocol        = "tcp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
+//
+//  ingress {
+//    from_port       = 111
+//    to_port         = 111
+//    protocol        = "tcp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
+//  ingress {
+//    from_port       = 111
+//    to_port         = 111
+//    protocol        = "udp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
+//
+//  ingress {
+//    from_port       = 2049
+//    to_port         = 2049
+//    protocol        = "tcp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
+//
+//  ingress {
+//    from_port       = 2049
+//    to_port         = 2049
+//    protocol        = "udp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
+//
+//  ingress {
+//    from_port       = 6817
+//    to_port         = 6818
+//    protocol        = "tcp"
+//    cidr_blocks     = ["0.0.0.0/0"]
+//  }
 
   ingress {
-    from_port       = 111
-    to_port         = 111
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port       = 111
-    to_port         = 111
-    protocol        = "udp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port       = 2049
-    to_port         = 2049
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port       = 2049
-    to_port         = 2049
-    protocol        = "udp"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port       = 6817
-    to_port         = 6818
+    from_port       = 0
+    to_port         = 65535
     protocol        = "tcp"
     cidr_blocks     = ["0.0.0.0/0"]
   }
