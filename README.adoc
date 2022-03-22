@@ -14,20 +14,23 @@
 ** Ansible (`sudo apt-get install -y ansible` or link:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu[installation guide])
 * Generate SSH key-pair, if you don't have one. (`ssh-keygen -t ed25519 -f ssh_key -P ""`)
 * Generate AWS access key (link:https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html[doc])
+* Configure AWS CLI (setup access key and secret key)
+[source,bash]
+----
+aws configure
+----
+
 
 == Terraform
 === Setup
-
 * Open `terraform/main.tf` file
 
 [source,hcl-terraform]
 ----
-# Edit the AWS access_key and secret_key
+# configure region
 provider "aws" {
   profile    = "default"
   region     = "us-east-1"
-  access_key = "xxxxxxxxxxxxxxxxxxxx"
-  secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
 
 # Edit public_key with your ssh_key.pub
