@@ -74,7 +74,7 @@ You can look for the IP address at `ansible/inventory`.
 
 [source,bash]
 ----
-ssh -i ssh_key ubuntu@<public_ip>
+ssh -i ~/.ssh/ssh_key  ubuntu@<public_ip>
 ----
 
 
