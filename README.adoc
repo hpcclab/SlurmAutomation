@@ -79,6 +79,9 @@ ssh -i ~/.ssh/ssh_key  ubuntu@<public_ip>
 
 
 == Clean up
+
+The following command will destroy all of the resources that were created by Terraform.
+
 [source,bash]
 ----
 terraform destroy
