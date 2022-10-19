@@ -26,6 +26,7 @@ aws configure
 [source,bash]
 ----
 git clone https://github.com/hpcclab/SlurmAutomation.git
+cd SlurmAutomation
 ----
 
 == Terraform
