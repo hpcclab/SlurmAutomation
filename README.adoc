@@ -31,7 +31,7 @@ cd SlurmAutomation
 
 == Terraform
 === Setup
-* Open `terraform/main.tf` file
+Open and edit `terraform/main.tf` file
 
 [source,hcl-terraform]
 ----
