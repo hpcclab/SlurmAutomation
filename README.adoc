@@ -94,5 +94,6 @@ The following command will destroy all of the resources that were created by Ter
 
 [source,bash]
 ----
+cd ../terraform
 terraform destroy
 ----
